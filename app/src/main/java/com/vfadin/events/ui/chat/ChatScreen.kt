@@ -53,24 +53,24 @@ fun Message() {
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier.padding(start = 16.dp, end = 4.dp)
     ) {
-        GlideImage(
-            imageModel = "https://i.pinimg.com/originals/7b/0d/7b/7b0d7b8b1b0d1b1b1b1b1b1b1b1b1b1b.jpg",
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-            failure = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_account_circle),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(24.dp),
-                    contentScale = ContentScale.Fit,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.Gray)
-                )
-            },
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-        )
+//        GlideImage(
+//            imageModel = "https://i.pinimg.com/originals/7b/0d/7b/7b0d7b8b1b0d1b1b1b1b1b1b1b1b1b1b.jpg",
+//            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+//            failure = {
+//                Image(
+//                    painter = painterResource(id = R.drawable.ic_account_circle),
+//                    modifier = Modifier
+//                        .clip(CircleShape)
+//                        .size(24.dp),
+//                    contentScale = ContentScale.Fit,
+//                    contentDescription = null,
+//                    colorFilter = ColorFilter.tint(Color.Gray)
+//                )
+//            },
+//            modifier = Modifier
+//                .size(24.dp)
+//                .clip(CircleShape)
+//        )
         Column(
             Modifier
                 .padding(top = 16.dp)

@@ -58,6 +58,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavHostController)
                         .clip(CircleShape)
                         .size(84.dp),
                     imageModel = profileState.avatar,
+//                    imageModel = "",
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                     failure = {
                         Image(

@@ -22,6 +22,8 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.IO
+import io.socket.client.Socket
 import javax.inject.Singleton
 
 @Module
@@ -55,6 +57,20 @@ object NetworkModule {
         )
     }
 
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object SocketModule {
+
+    @Provides
+    fun provideSocket(): Socket {
+        val options = IO.Options.builder()
+            .setForceNew(true)
+            .setReconnection(true)
+            .build()
+        return IO.socket("http://194.147.115.205:3000", options)
+    }
 }
 
 @Module

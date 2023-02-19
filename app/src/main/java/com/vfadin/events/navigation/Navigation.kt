@@ -6,8 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import com.vfadin.events.data.network.Urls
+import com.vfadin.events.ui.chat.ChatScreen
+import com.vfadin.events.ui.chat.ChatViewModel
 import com.vfadin.events.ui.home.HomeScreen
+import com.vfadin.events.ui.home.HomeViewModel
+import com.vfadin.events.ui.home.newChat.NewChatScreen
+import com.vfadin.events.ui.home.newChat.NewChatViewModel
 import com.vfadin.events.ui.login.AccExistScreen
 import com.vfadin.events.ui.login.LoginScreen
 import com.vfadin.events.ui.login.LoginViewModel
@@ -16,11 +20,6 @@ import com.vfadin.events.ui.login.forgotPassword.ForgotPasswordViewModel
 import com.vfadin.events.ui.login.forgotPassword.newPassword.NewPasswordScreen
 import com.vfadin.events.ui.login.forgotPassword.newPassword.NewPasswordViewModel
 import com.vfadin.events.ui.profile.ProfileScreen
-import com.vfadin.events.ui.chat.ChatScreen
-import com.vfadin.events.ui.chat.ChatViewModel
-import com.vfadin.events.ui.home.HomeViewModel
-import com.vfadin.events.ui.home.newChat.NewChatScreen
-import com.vfadin.events.ui.home.newChat.NewChatViewModel
 import com.vfadin.events.ui.profile.ProfileViewModel
 import com.vfadin.events.ui.profile.changeFieldScreen.ChangeFieldScreen
 import com.vfadin.events.ui.profile.changeFieldScreen.ChangeFieldViewModel
@@ -28,7 +27,7 @@ import com.vfadin.events.ui.profile.changeFieldScreen.ChangeFieldViewModel
 @Composable
 fun Navigation(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
 ) {
     NavHost(
         navController = navController,
@@ -89,6 +88,7 @@ fun Navigation(
         }
         composable("chat_screen/{id}") {
             val viewModel = hiltViewModel<ChatViewModel>()
+            viewModel.chatId = it.arguments?.getString("id")?.toIntOrNull() ?: -1
             ChatScreen(viewModel, navController)
         }
     }
