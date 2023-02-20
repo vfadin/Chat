@@ -6,14 +6,8 @@ import com.vfadin.events.data.datasource.HttpChatRemoteDataSource
 import com.vfadin.events.data.network.INetwork
 import com.vfadin.events.data.network.Network
 import com.vfadin.events.data.network.SupportInterceptor
-import com.vfadin.events.data.repo.ForgotPasswordRepo
-import com.vfadin.events.data.repo.LoginRepo
-import com.vfadin.events.data.repo.HomeRepo
-import com.vfadin.events.domain.repo.IHomeRepo
-import com.vfadin.events.data.repo.ProfileRepo
-import com.vfadin.events.domain.repo.IProfileRepo
-import com.vfadin.events.domain.repo.IForgotPasswordRepo
-import com.vfadin.events.domain.repo.ILoginRepo
+import com.vfadin.events.data.repo.*
+import com.vfadin.events.domain.repo.*
 import com.vfadin.events.util.SharedPrefs
 import dagger.Module
 import dagger.Provides
@@ -64,10 +58,11 @@ object NetworkModule {
 object SocketModule {
 
     @Provides
-    fun provideSocket(): Socket {
+    fun provideSocket(@ApplicationContext context: Context): Socket {
         val options = IO.Options.builder()
             .setForceNew(true)
             .setReconnection(true)
+            .setExtraHeaders(mapOf("token" to listOf(SharedPrefs(context).restoreToken())))
             .build()
         return IO.socket("http://194.147.115.205:3000", options)
     }
@@ -91,7 +86,7 @@ object RepositoryModule {
     @ActivityRetainedScoped
     fun provideLoginRepo(
         dataSource: HttpChatRemoteDataSource,
-        sharedPrefs: SharedPrefs
+        sharedPrefs: SharedPrefs,
     ): ILoginRepo {
         return LoginRepo(dataSource, sharedPrefs)
     }
@@ -110,9 +105,19 @@ object RepositoryModule {
 
     @Provides
     @ActivityRetainedScoped
+    fun provideChatRepo(
+        socket: Socket,
+        dataSource: HttpChatRemoteDataSource,
+        sharedPrefs: SharedPrefs,
+    ): IChatRepo {
+        return ChatRepo(dataSource, sharedPrefs, socket)
+    }
+
+    @Provides
+    @ActivityRetainedScoped
     fun provideProfileRepo(
         dataSource: HttpChatRemoteDataSource,
-        sharedPrefs: SharedPrefs
+        sharedPrefs: SharedPrefs,
     ): IProfileRepo {
         return ProfileRepo(dataSource, sharedPrefs)
     }

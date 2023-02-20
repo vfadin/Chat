@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,37 +25,57 @@ import androidx.navigation.NavHostController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.vfadin.events.R
+import com.vfadin.events.domain.entity.Message
 import com.vfadin.events.ui.components.BottomNavBar
 import com.vfadin.events.ui.theme.BorderGray
 import com.vfadin.events.ui.theme.PlaceholderGray
 import com.vfadin.events.ui.theme.SurfaceGray
+import com.vfadin.events.ui.theme.TextBlack
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel, navController: NavHostController) {
     Scaffold(
-        topBar = { ChatAppBar(viewModel) },
-        bottomBar = { BottomNavBar(navController) }
+        topBar = { ChatAppBar(viewModel, onBackIconClick = { navController.navigateUp() }) }
     ) { padding ->
-        LazyColumn(contentPadding = padding) {
-            item { Message() }
-            item { SendMessageRow() }
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp),
+        ) {
+            LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxWidth()) {
+                items(viewModel.messageState) {
+                    Message(it)
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(MaterialTheme.colors.background)
+            ) {
+                SendMessageRow()
+            }
         }
     }
 }
 
 @Composable
 fun SendMessageRow() {
-    Row() {
-//        OutlinedTextField(value = , onValueChange = )
-    }
+    OutlinedTextField(value = "",
+        onValueChange = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        trailingIcon = {
+            Icon(Icons.Default.Send, null)
+        },
+        placeholder = { Text(text = "Message...") }
+    )
 }
 
 @Composable
-fun Message() {
-    Row(
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier.padding(start = 16.dp, end = 4.dp)
-    ) {
+fun Message(message: Message) {
+    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(vertical = 4.dp)) {
 //        GlideImage(
 //            imageModel = "https://i.pinimg.com/originals/7b/0d/7b/7b0d7b8b1b0d1b1b1b1b1b1b1b1b1b1b.jpg",
 //            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
@@ -71,21 +94,17 @@ fun Message() {
 //                .size(24.dp)
 //                .clip(CircleShape)
 //        )
-        Column(
+        Box(
             Modifier
-                .padding(top = 16.dp)
-                .background(SurfaceGray)
                 .clip(RoundedCornerShape(16.dp))
+                .background(SurfaceGray)
         ) {
             Text(
-                text = "Иван Иванов",
-                fontSize = 14.sp,
-                color = Color.Blue
-            )
-            Text(
-                text = "Привет, как дела?",
-                fontSize = 14.sp,
-                color = BorderGray
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                text = message.text,
+                style = MaterialTheme.typography.body1
             )
         }
     }
@@ -102,15 +121,14 @@ private fun ChatAppBar(
         contentColor = MaterialTheme.colors.onBackground,
         elevation = 2.dp
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
         ) {
             Box(
                 modifier = Modifier
+                    .align(Alignment.CenterStart)
                     .size(24.dp)
                     .clickable { onBackIconClick() },
                 contentAlignment = Alignment.Center
@@ -122,7 +140,9 @@ private fun ChatAppBar(
                     tint = PlaceholderGray
                 )
             }
-            Row(Modifier.padding(top = 4.dp)) {
+            Row(Modifier
+                .padding(top = 4.dp)
+                .align(Alignment.Center)) {
                 GlideImage(
                     modifier = Modifier
                         .clip(CircleShape)

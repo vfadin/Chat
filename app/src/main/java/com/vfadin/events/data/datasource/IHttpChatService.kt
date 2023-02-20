@@ -29,9 +29,10 @@ interface IHttpChatService {
     @GET("api/profile")
     suspend fun getProfile(@Header("authorization") token: String): ApiProfileResponse
 
-    @GET("/api/get_messages")
+    @GET("/api/getmessages/{id}")
     suspend fun getMessages(
-        @Header("authorization") token: String
+        @Header("authorization") token: String,
+        @Path("id") chatId: Int
     ): ApiMessagesResponse
 
     @POST("/api/startchat")

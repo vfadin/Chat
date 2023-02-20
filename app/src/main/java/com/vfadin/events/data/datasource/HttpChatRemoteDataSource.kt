@@ -37,8 +37,8 @@ class HttpChatRemoteDataSource @Inject constructor(
         api.getProfile(token)
     }
 
-    suspend fun getMessages(token: String) = safeApiCall {
-        api.getMessages(token)
+    suspend fun getMessages(token: String, chatId: Int) = safeApiCall {
+        api.getMessages(token, chatId)
     }
 
     suspend fun startChat(token: String, startChat: ApiStartChatBody) = safeApiCall {

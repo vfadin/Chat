@@ -8,6 +8,7 @@ import com.vfadin.events.domain.RequestResult
 import com.vfadin.events.domain.entity.Chat
 import com.vfadin.events.domain.repo.IHomeRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.socket.client.Socket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repo: IHomeRepo
+    private val repo: IHomeRepo,
+    private val socket: Socket
 ) : ViewModel() {
     private var chatList = listOf<Chat>()
     private val _chatsStateFlow = MutableStateFlow<List<Chat>?>(null)
@@ -29,6 +31,7 @@ class HomeViewModel @Inject constructor(
 
     fun init(navHostController: NavHostController) {
         if (!isInitialized) {
+            socket.connect()
             navController = navHostController
             isInitialized = true
         }

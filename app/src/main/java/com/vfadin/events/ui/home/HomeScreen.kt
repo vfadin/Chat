@@ -68,7 +68,7 @@ fun ChatItem(chat: Chat, onClick: () -> Unit = {}) {
         GlideImage(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(64.dp),
+                .size(40.dp),
             imageModel = chat.avatarUrl,
             imageOptions = ImageOptions(contentScale = ContentScale.Crop),
             failure = {
@@ -76,7 +76,7 @@ fun ChatItem(chat: Chat, onClick: () -> Unit = {}) {
                     painter = painterResource(id = R.drawable.ic_account_circle),
                     modifier = Modifier
                         .clip(CircleShape)
-                        .size(64.dp),
+                        .size(40.dp),
                     contentScale = ContentScale.Fit,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(Color.Gray)
@@ -85,9 +85,8 @@ fun ChatItem(chat: Chat, onClick: () -> Unit = {}) {
         )
         Column(Modifier.padding(start = 24.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Text(
-                modifier = Modifier.padding(bottom = 4.dp),
                 text = chat.name,
-                style = MaterialTheme.typography.h2
+                style = MaterialTheme.typography.h3
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
@@ -95,10 +94,12 @@ fun ChatItem(chat: Chat, onClick: () -> Unit = {}) {
                         "${chat.lastMessage.text.substring(0, 55)}..."
                     else if (chat.lastMessage.text.isEmpty()) "Чат создан"
                     else chat.lastMessage.text,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.body2
                 )
                 Text(
                     text = chat.updatedAt.substringBefore("T"),
+                    style = MaterialTheme.typography.body2
                 )
             }
         }

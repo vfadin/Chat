@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val repo: IProfileRepo,
-    private val sharedPrefs: SharedPrefs
+    private val sharedPrefs: SharedPrefs,
 ) : ViewModel() {
 
     var profileState by mutableStateOf(Profile())

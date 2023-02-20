@@ -4,33 +4,47 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vfadin.events.domain.RequestResult
+import com.vfadin.events.domain.entity.Message
+import com.vfadin.events.domain.repo.IChatRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.socket.client.Socket
-import org.json.JSONObject
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val socket: Socket
+    private val repo: IChatRepo,
 ) : ViewModel() {
 
     var appBarState by mutableStateOf(ChatAppBarState())
-    var chatId = -1
+    var messageState by mutableStateOf(listOf<Message>())
+    private var isInitialized = false
 
-    init {
+    fun init(chatId: Int) {
         appBarState = appBarState.copy(
             name = "John Doe",
             avatarUrl = "https://randomuser.me/api/portraits/men/1.jpg",
             isOnline = true,
         )
-        socket.connect()
-        socket.emit("join", chatId)
-        socket.on("message") { args ->
-            val data = args[0] as JSONObject
-            println("Received event in my-room: $data")
+        if (!isInitialized) {
+            isInitialized = true
+            viewModelScope.launch {
+                getAllMessages(chatId)
+                repo.startSocket(chatId).collect {
+                    messageState = messageState.plus(it)
+                }
+            }
         }
-        socket.on("error") { args ->
-            println("Received event in my-room: $args")
+    }
+
+    private suspend fun getAllMessages(chatId: Int) {
+        when (val response = repo.getAllMessages(chatId)) {
+            is RequestResult.Success -> {
+                messageState = response.result
+            }
+            is RequestResult.Error -> {}
         }
     }
 }
