@@ -1,6 +1,7 @@
 package com.vfadin.events.domain.repo
 
 import com.vfadin.events.domain.RequestResult
+import com.vfadin.events.domain.entity.Profile
 import com.vfadin.events.domain.entity.login.LoginResponse
 import com.vfadin.events.domain.entity.login.RegistrationResponse
 

@@ -13,7 +13,7 @@ data class ApiProfileResponse(
 @JsonClass(generateAdapter = true)
 data class ApiProfile(
     @Json(name = "id")
-    val id: String?,
+    val id: Int?,
     @Json(name = "user_name")
     val userName: String?,
     @Json(name = "avatar")
@@ -29,6 +29,7 @@ data class ApiProfile(
 )
 
 fun ApiProfile.toProfile() = Profile(
+    id = id ?: -1,
     email = email ?: "",
 //    phone = phone ?: "",
     firstName = firstName ?: "",

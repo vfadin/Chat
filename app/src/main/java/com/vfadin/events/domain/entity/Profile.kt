@@ -1,6 +1,8 @@
 package com.vfadin.events.domain.entity
 
+@kotlinx.serialization.Serializable
 data class Profile(
+    val id: Int = -1,
     val email: String = "",
     val phone: String = "",
     val birthdayAt: String = "",

@@ -26,16 +26,13 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.vfadin.events.R
 import com.vfadin.events.domain.entity.Message
-import com.vfadin.events.ui.components.BottomNavBar
-import com.vfadin.events.ui.theme.BorderGray
 import com.vfadin.events.ui.theme.PlaceholderGray
 import com.vfadin.events.ui.theme.SurfaceGray
-import com.vfadin.events.ui.theme.TextBlack
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel, navController: NavHostController) {
     Scaffold(
-        topBar = { ChatAppBar(viewModel, onBackIconClick = { navController.navigateUp() }) }
+        topBar = { ChatAppBar(viewModel) { navController.navigateUp() } }
     ) { padding ->
         Box(
             Modifier
@@ -45,7 +42,7 @@ fun ChatScreen(viewModel: ChatViewModel, navController: NavHostController) {
         ) {
             LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxWidth()) {
                 items(viewModel.messageState) {
-                    Message(it)
+                    Message(it, it.author == viewModel.chatState.currentUser.id)
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -74,8 +71,17 @@ fun SendMessageRow() {
 }
 
 @Composable
-fun Message(message: Message) {
-    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(vertical = 4.dp)) {
+fun Message(message: Message, isYourMessage: Boolean) {
+    Row(verticalAlignment = Alignment.Bottom,
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+            .padding(
+                start = if (isYourMessage) 24.dp else 0.dp,
+                end = if (isYourMessage) 0.dp else 24.dp
+            )
+            .fillMaxWidth(),
+        horizontalArrangement = if (isYourMessage) Arrangement.End else Arrangement.Start
+    ) {
 //        GlideImage(
 //            imageModel = "https://i.pinimg.com/originals/7b/0d/7b/7b0d7b8b1b0d1b1b1b1b1b1b1b1b1b1b.jpg",
 //            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
@@ -97,7 +103,7 @@ fun Message(message: Message) {
         Box(
             Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .background(SurfaceGray)
+                .background(if (isYourMessage) SurfaceGray else PlaceholderGray)
         ) {
             Text(
                 modifier = Modifier
@@ -114,7 +120,6 @@ fun Message(message: Message) {
 private fun ChatAppBar(
     viewModel: ChatViewModel,
     onBackIconClick: () -> Unit = {},
-    onUserClick: () -> Unit = {},
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.background,
@@ -147,7 +152,7 @@ private fun ChatAppBar(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(32.dp),
-                    imageModel = viewModel.appBarState.avatarUrl,
+                    imageModel = viewModel.chatState.avatarUrl,
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                     failure = {
                         Image(
@@ -163,13 +168,13 @@ private fun ChatAppBar(
                 )
                 Column(Modifier.padding(start = 24.dp)) {
                     Text(
-                        text = viewModel.appBarState.name,
+                        text = viewModel.chatState.name,
                         color = MaterialTheme.colors.onBackground
                     )
                     Text(
-                        text = if (viewModel.appBarState.memberCount > 2)
-                            "${viewModel.appBarState.memberCount} участников" else
-                            if (viewModel.appBarState.isOnline) "Онлайн" else "Офлайн",
+                        text = if (viewModel.chatState.memberCount > 2)
+                            "${viewModel.chatState.memberCount} участников" else
+                            if (viewModel.chatState.isOnline) "Онлайн" else "Офлайн",
                         modifier = Modifier.weight(1f)
                     )
                 }

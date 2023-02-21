@@ -9,7 +9,6 @@ import com.vfadin.events.domain.RequestResult
 import com.vfadin.events.domain.entity.Message
 import com.vfadin.events.domain.repo.IChatRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.socket.client.Socket
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,12 +17,12 @@ class ChatViewModel @Inject constructor(
     private val repo: IChatRepo,
 ) : ViewModel() {
 
-    var appBarState by mutableStateOf(ChatAppBarState())
+    var chatState by mutableStateOf(ChatState())
     var messageState by mutableStateOf(listOf<Message>())
     private var isInitialized = false
 
     fun init(chatId: Int) {
-        appBarState = appBarState.copy(
+        chatState = chatState.copy(
             name = "John Doe",
             avatarUrl = "https://randomuser.me/api/portraits/men/1.jpg",
             isOnline = true,
@@ -31,11 +30,21 @@ class ChatViewModel @Inject constructor(
         if (!isInitialized) {
             isInitialized = true
             viewModelScope.launch {
+                getCurrentUser()
                 getAllMessages(chatId)
                 repo.startSocket(chatId).collect {
                     messageState = messageState.plus(it)
                 }
             }
+        }
+    }
+
+    private suspend fun getCurrentUser() {
+        when (val response = repo.getCurrentUser()) {
+            is RequestResult.Success -> {
+                chatState = chatState.copy(currentUser = response.result)
+            }
+            is RequestResult.Error -> {}
         }
     }
 
