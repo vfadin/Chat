@@ -48,7 +48,7 @@ fun HomeScreen(viewModel: HomeViewModel, navController: NavHostController) {
         ) {
             items(chats) {
                 ChatItem(chat = it) {
-                    navController.navigate("chat_screen/${it.id}")
+                    navController.navigate("chat_screen/${it.id}/${it.name}")
                 }
             }
         }
@@ -136,7 +136,7 @@ private fun AppTopBar(viewModel: HomeViewModel) {
                         .padding(end = 16.dp),
                     singleLine = true,
                     keyboardActions = KeyboardActions(
-                        onDone  = {
+                        onDone = {
                             viewModel.search()
                         }
                     )

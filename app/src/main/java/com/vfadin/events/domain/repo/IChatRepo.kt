@@ -7,8 +7,9 @@ import com.vfadin.events.domain.entity.User
 import kotlinx.coroutines.flow.Flow
 
 interface IChatRepo {
-    suspend fun getUser(roomId: Int) : RequestResult<User>
+    suspend fun getUser(roomId: Int): RequestResult<User>
     suspend fun getCurrentUser(): RequestResult<Profile>
     suspend fun startSocket(roomId: Int): Flow<Message>
     suspend fun getAllMessages(roomId: Int): RequestResult<List<Message>>
+    suspend fun sendMessage(roomId: Int, text: String): RequestResult<Unit>
 }

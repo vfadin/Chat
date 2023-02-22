@@ -86,11 +86,18 @@ fun Navigation(
             }
             ProfileScreen(viewModel, navController)
         }
-        composable("chat_screen/{id}") {
+        composable("chat_screen/{id}/{title}/{memberCount}") {
             it.arguments?.getString("id")?.let { id ->
-                val viewModel = hiltViewModel<ChatViewModel>()
-                viewModel.init(id.toIntOrNull() ?: -1)
-                ChatScreen(viewModel, navController)
+                it.arguments?.getString("title")?.let { title ->
+                    it.arguments?.getString("memberCount")?.let { memberCount ->
+                        val viewModel = hiltViewModel<ChatViewModel>()
+                        viewModel.init(
+                            chatId = id.toIntOrNull() ?: -1,
+                            title = title,
+                            memberCount = memberCount.toIntOrNull() ?: -1)
+                        ChatScreen(viewModel, navController)
+                    }
+                }
             }
         }
     }

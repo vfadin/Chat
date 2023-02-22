@@ -28,11 +28,19 @@ class ChatRepo(
         return RequestResult.Success(User(-1, "", "", true))
     }
 
+    override suspend fun sendMessage(roomId: Int, text: String): RequestResult<Unit> {
+        println(JSONObject(mapOf("roomId" to roomId, "content" to text, "type" to 1)))
+        socket.emit("message",
+            JSONObject(mapOf("roomId" to roomId, "content" to text, "type" to 1)))
+        return RequestResult.Success(Unit)
+    }
+
     override suspend fun getCurrentUser(): RequestResult<Profile> {
-        return when(val response = dataSource.getProfile(
+        return when (val response = dataSource.getProfile(
             token = "${sharedPreferences.restoreTokenType()} ${sharedPreferences.restoreToken()}"
         )) {
-            is RequestResult.Success -> RequestResult.Success(response.result.data?.toProfile() ?: Profile())
+            is RequestResult.Success -> RequestResult.Success(response.result.data?.toProfile()
+                ?: Profile())
             is RequestResult.Error -> RequestResult.Error(response.exception)
         }
     }
@@ -53,8 +61,10 @@ class ChatRepo(
 
     override suspend fun startSocket(roomId: Int): Flow<Message> {
         val jsonAdapter = Moshi.Builder().build().adapter(ApiMessage::class.java)
-        socket.connect()
-        socket.emit("join", roomId)
+        if (!socket.connected()) {
+            socket.connect()
+            socket.emit("join", roomId)
+        }
         socket.on("message") {
             println(it.first() as JSONObject)
             jsonAdapter.fromJson(it.first().toString())?.toMessage()?.let { message ->

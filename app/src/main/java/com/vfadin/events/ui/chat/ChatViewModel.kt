@@ -21,21 +21,37 @@ class ChatViewModel @Inject constructor(
     var messageState by mutableStateOf(listOf<Message>())
     private var isInitialized = false
 
-    fun init(chatId: Int) {
+    fun init(chatId: Int, title: String, memberCount: Int) {
         chatState = chatState.copy(
-            name = "John Doe",
-            avatarUrl = "https://randomuser.me/api/portraits/men/1.jpg",
-            isOnline = true,
+            name = title,
+            roomId = chatId,
+            memberCount = memberCount
         )
         if (!isInitialized) {
             isInitialized = true
             viewModelScope.launch {
                 getCurrentUser()
                 getAllMessages(chatId)
+                chatState.listState.scrollToItem(messageState.size - 1)
                 repo.startSocket(chatId).collect {
                     messageState = messageState.plus(it)
                 }
             }
+        }
+    }
+
+    fun onEvent(event: ChatEvent) {
+        when (event) {
+            is ChatEvent.MessageTextChanged -> chatState = chatState.copy(message = event.text)
+            ChatEvent.OnAttachClicked -> TODO()
+            ChatEvent.OnSendClicked -> sendMessage()
+        }
+    }
+
+    private fun sendMessage() {
+        viewModelScope.launch {
+            if (chatState.message.isNotEmpty())
+                repo.sendMessage(chatState.roomId, chatState.message)
         }
     }
 

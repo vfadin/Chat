@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.Attachment
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,31 +42,59 @@ fun ChatScreen(viewModel: ChatViewModel, navController: NavHostController) {
                 .padding(padding)
                 .padding(horizontal = 16.dp),
         ) {
-            LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxWidth()) {
-                items(viewModel.messageState) {
-                    Message(it, it.author == viewModel.chatState.currentUser.id)
+            LazyColumn(
+                contentPadding = padding,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 70.dp),
+                state = viewModel.chatState.listState
+            ) {
+                items(viewModel.messageState) { message ->
+                    Message(
+                        message = message,
+                        isYourMessage = message.author == viewModel.chatState.currentUser.id
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Box(modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .background(MaterialTheme.colors.background)
+//                .background(MaterialTheme.colors.background)
             ) {
-                SendMessageRow()
+                SendMessageRow(
+                    messageText = viewModel.chatState.message,
+                    onLeadingIconClick = { viewModel.onEvent(ChatEvent.OnAttachClicked) },
+                    onTrailingIconClick = { viewModel.onEvent(ChatEvent.OnSendClicked) }
+                ) { text ->
+                    viewModel.onEvent(ChatEvent.MessageTextChanged(text))
+                }
             }
         }
     }
 }
 
 @Composable
-fun SendMessageRow() {
-    OutlinedTextField(value = "",
-        onValueChange = {},
+fun SendMessageRow(
+    messageText: String,
+    onLeadingIconClick: () -> Unit,
+    onTrailingIconClick: () -> Unit,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = messageText,
+        onValueChange = { onValueChange(it) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
+        leadingIcon = {
+            Icon(Icons.Default.AttachFile, null, modifier = Modifier.clickable {
+                onLeadingIconClick()
+            })
+        },
         trailingIcon = {
-            Icon(Icons.Default.Send, null)
+            Icon(Icons.Default.Send, null, modifier = Modifier.clickable {
+                onTrailingIconClick()
+            })
         },
         placeholder = { Text(text = "Message...") }
     )
@@ -147,7 +177,8 @@ private fun ChatAppBar(
             }
             Row(Modifier
                 .padding(top = 4.dp)
-                .align(Alignment.Center)) {
+                .align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically) {
                 GlideImage(
                     modifier = Modifier
                         .clip(CircleShape)
