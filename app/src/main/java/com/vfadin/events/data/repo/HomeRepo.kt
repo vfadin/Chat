@@ -11,7 +11,7 @@ import com.vfadin.events.util.SharedPrefs
 
 class HomeRepo(
     private val dataSource: HttpChatRemoteDataSource,
-    private val sharedPreferences: SharedPrefs
+    private val sharedPreferences: SharedPrefs,
 ) : IHomeRepo {
     override suspend fun getChats(): RequestResult<List<Chat>> {
         return when (val response = dataSource.getRooms(
@@ -41,19 +41,22 @@ class HomeRepo(
     }
 
     override suspend fun getUsers(): RequestResult<List<User>> {
-        return RequestResult.Success(
-            listOf(
-                User(
-                    id = 2,
-                    name = "Vladislav",
-                    avatar = "https://avatars.githubusercontent.com/u/1016365?v=4"
-                ),
-                User(
-                    id = 1,
-                    name = "Grisha",
-                    avatar = "https://avatars.githubusercontent.com/u/1016365?v=4"
-                ),
-            )
-        )
+        return when (val profile = dataSource.getProfile(
+            token = "${sharedPreferences.restoreTokenType()} ${sharedPreferences.restoreToken()}"
+        )) {
+            is RequestResult.Success -> {
+                when (val response = dataSource.getUsers(
+                    token = "${sharedPreferences.restoreTokenType()} ${sharedPreferences.restoreToken()}",
+                )) {
+                    is RequestResult.Success -> RequestResult.Success(
+                        response.result.data?.filter {
+                            it.id != profile.result.data?.id
+                        }?.map { it.toUser() } ?: emptyList()
+                    )
+                    is RequestResult.Error -> RequestResult.Error(response.exception)
+                }
+            }
+            is RequestResult.Error -> RequestResult.Error(profile.exception)
+        }
     }
 }

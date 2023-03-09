@@ -31,8 +31,8 @@ class LoginViewModel @Inject constructor(
 
     init {
         loginState = loginState.copy(
-            login = "1@q.ru",
-            password = "Admin00!"
+            login = "romanbakhmann@yandex.ru",
+            password = "Auslander00!"
         )
         registrationState = registrationState.copy(
             email = "1@q.ru",

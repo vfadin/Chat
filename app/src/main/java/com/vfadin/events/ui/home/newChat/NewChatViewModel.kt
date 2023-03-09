@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewChatViewModel @Inject constructor(
-    private val repo: IHomeRepo
+    private val repo: IHomeRepo,
 ) : ViewModel() {
 
     var users by mutableStateOf(listOf<User>())
@@ -48,9 +48,7 @@ class NewChatViewModel @Inject constructor(
 
     fun createChat() {
         viewModelScope.launch {
-            when (
-                val response = repo.createChat(users.filter { it.isSelected }.map { it.id.toInt() })
-            ) {
+            when (repo.createChat(users.filter { it.isSelected }.map { it.id })) {
                 is RequestResult.Success -> {
                     navController?.popBackStack()
                     navController?.navigate("home")

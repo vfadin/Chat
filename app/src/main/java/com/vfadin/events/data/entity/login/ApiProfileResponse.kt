@@ -3,6 +3,7 @@ package com.vfadin.events.data.entity.login
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.vfadin.events.domain.entity.Profile
+import com.vfadin.events.domain.entity.User
 
 @JsonClass(generateAdapter = true)
 data class ApiProfileResponse(
@@ -26,7 +27,13 @@ data class ApiProfile(
     val firstName: String?,
     @Json(name = "surname")
     val lastName: String?,
-)
+) {
+    fun toUser() = User(
+        id = id ?: -1,
+        name = userName ?: "",
+        avatar = avatar ?: "",
+    )
+}
 
 fun ApiProfile.toProfile() = Profile(
     id = id ?: -1,

@@ -22,6 +22,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.vfadin.events.R
 import com.vfadin.events.ui.components.FormattedTopAppBar
+import com.vfadin.events.ui.theme.BlueTransparent
 
 @Composable
 fun NewChatScreen(viewModel: NewChatViewModel) {
@@ -52,9 +53,9 @@ fun NewChatScreen(viewModel: NewChatViewModel) {
                         }) {
                     Row(
                         modifier = Modifier
+                            .background(if (user.isSelected) BlueTransparent else Color.Transparent)
                             .fillMaxSize()
-                            .padding(vertical = 8.dp)
-                            .background(if (user.isSelected) Color.LightGray else Color.Transparent),
+                            .padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(Modifier.padding(horizontal = 16.dp)) {

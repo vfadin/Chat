@@ -57,4 +57,8 @@ class HttpChatRemoteDataSource @Inject constructor(
         api.changeName(token, ApiChangeName(name.substringBefore(" ")))
         api.changeSurname(token, ApiChangeSurname(name.substringAfter(" ")))
     }
+
+    suspend fun getUsers(token: String) = safeApiCall {
+        api.getUsers(token)
+    }
 }

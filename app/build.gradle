@@ -50,6 +50,10 @@ android {
 }
 
 dependencies {
+    //Cropper
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+
     implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
@@ -63,6 +67,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     implementation "androidx.security:security-crypto:1.1.0-alpha02"
+    implementation "com.google.accompanist:accompanist-permissions:0.27.0"
     //Moshi
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.14.0'

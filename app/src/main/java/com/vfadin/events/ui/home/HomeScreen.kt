@@ -48,7 +48,7 @@ fun HomeScreen(viewModel: HomeViewModel, navController: NavHostController) {
         ) {
             items(chats) {
                 ChatItem(chat = it) {
-                    navController.navigate("chat_screen/${it.id}/${it.name}")
+                    navController.navigate("chat_screen/${it.id}/${it.name}/${it.members.size}")
                 }
             }
         }

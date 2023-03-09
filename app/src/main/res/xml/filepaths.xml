@@ -1,0 +1,10 @@
+<path>
+    <files-path name="filesPath" path="."/>
+    <external-path name="Downloads" path="/"/>
+    <files-path
+        name="my_images"
+        path="images/" />
+    <cache-path
+        name="my_images"
+        path="images/" />
+</path>

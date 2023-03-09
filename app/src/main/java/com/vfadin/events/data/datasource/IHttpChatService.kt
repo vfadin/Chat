@@ -2,10 +2,7 @@ package com.vfadin.events.data.datasource
 
 import com.vfadin.events.data.entity.*
 import com.vfadin.events.data.entity.forgotPassword.*
-import com.vfadin.events.data.entity.home.ApiMessagesResponse
-import com.vfadin.events.data.entity.home.ApiRoomsResponse
-import com.vfadin.events.data.entity.home.ApiStartChatBody
-import com.vfadin.events.data.entity.home.ApiStartChatResponse
+import com.vfadin.events.data.entity.home.*
 import com.vfadin.events.data.entity.login.*
 import com.vfadin.events.data.entity.profile.ApiChangeName
 import com.vfadin.events.data.entity.profile.ApiChangeSurname
@@ -45,6 +42,11 @@ interface IHttpChatService {
     suspend fun getRooms(
         @Header("authorization") token: String
     ): ApiRoomsResponse
+
+    @GET("/api/users")
+    suspend fun getUsers(
+        @Header("authorization") token: String
+    ): ApiGetUsers
 
     @POST("/api/changeusername")
     suspend fun changeUsername(

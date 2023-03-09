@@ -32,7 +32,7 @@ class ChatViewModel @Inject constructor(
             viewModelScope.launch {
                 getCurrentUser()
                 getAllMessages(chatId)
-                chatState.listState.scrollToItem(messageState.size - 1)
+                if (messageState.size > 1) chatState.listState.scrollToItem(messageState.size - 1)
                 repo.startSocket(chatId).collect {
                     messageState = messageState.plus(it)
                 }
@@ -43,15 +43,18 @@ class ChatViewModel @Inject constructor(
     fun onEvent(event: ChatEvent) {
         when (event) {
             is ChatEvent.MessageTextChanged -> chatState = chatState.copy(message = event.text)
-            ChatEvent.OnAttachClicked -> TODO()
+            ChatEvent.OnAttachClicked -> {}
             ChatEvent.OnSendClicked -> sendMessage()
         }
     }
 
     private fun sendMessage() {
         viewModelScope.launch {
-            if (chatState.message.isNotEmpty())
+            if (chatState.message.isNotEmpty()) {
                 repo.sendMessage(chatState.roomId, chatState.message)
+                getAllMessages(chatState.roomId)
+                chatState = chatState.copy(message = "")
+            }
         }
     }
 
